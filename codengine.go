@@ -81,23 +81,9 @@ func (ce *CodeEngine) walk(fn func(ast.Node) bool) {
 	ast.Walk(walker(fn), ce.AstFile)
 }
 
-func OpenOrCreateFile(filePath string) (*os.File, error) {
-	fp, err := os.OpenFile(filePath, os.O_RDWR, os.ModeAppend)
-	if err != nil {
-		if os.IsNotExist(err) {
-			fp, err = os.Create(filePath)
-		} else {
-			println("Open-err:%s", err.Error())
-			os.Exit(1)
-		}
-	}
-
-	return fp, nil
-}
-
 func (ce *CodeEngine) GenerateCodeFile(DstArray, dstFileDir string) {
 	filePath := dstFileDir + strings.ToLower(DstArray) + fileSuffix
-	fp, err := OpenOrCreateFile(filePath)
+	fp, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
 		return
 	}
